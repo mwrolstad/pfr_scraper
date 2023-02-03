@@ -154,6 +154,7 @@ def scrape_games(year: int, week: int):
                         player_stats_df = player_stats_df[
                             (player_stats_df["player"] != "Player") & (player_stats_df["player"].notnull())
                         ]
+                        player_stats_df["team_abrv"] = player_stats_df["team_abrv"].apply(lambda x : NFL_ABRV[x])
                         player_stats_df = player_stats_df.assign(game_url=game_dict["game_url"])
                         player_stats_df = player_stats_df.assign(game_date=game_dict["game_date"])
                         player_stats_df = player_stats_df.fillna(0)
@@ -170,7 +171,7 @@ def scrape_games(year: int, week: int):
                     for i in range(1, 3):
                         stat_dict = {}
                         stat_dict["team_abrv"] = abrvs[i - 1]
-
+                        stat_dict["team_name"] = teams[i - 1]
                         stat_dict["first_downs"] = stats_df.iloc[0][i] if stats_df.iloc[0][i] else None
                         rush_stats = stats_df.iloc[1][i] if stats_df.iloc[1][i] else None
                         pass_stats = stats_df.iloc[2][i] if stats_df.iloc[2][i] else None
@@ -209,10 +210,10 @@ def scrape_games(year: int, week: int):
                             ]
 
                             logging.info("About to grab the drive table")
-                            home_drive_dfs = pd.read_html(f"<html>{home_drive_table[0]}</html>")
-                            home_drive_df = home_drive_dfs[0]
-                            drives = len(home_drive_df)
-                            drive_text = str(home_drive_df["Result"])
+                            drive_dfs = pd.read_html(f"<html>{home_drive_table[0]}</html>")
+                            drive_df = drive_dfs[0]
+                            drives = len(drive_df)
+                            drive_text = str(drive_df["Result"])
 
                             if "End of Game" in drive_text:
                                 drives = drives - 1
@@ -225,7 +226,7 @@ def scrape_games(year: int, week: int):
 
                             home_abrv_check = url.split(".htm")[0][-3:]
 
-                            for index, row in home_drive_df.iterrows():
+                            for index, row in drive_df.iterrows():
                                 start_line = (
                                     int(row["LOS"].split(" ")[1])
                                     if type(row["LOS"]) is str and row["LOS"] != "50"
@@ -234,14 +235,14 @@ def scrape_games(year: int, week: int):
 
                                 if start_line != 50 and home_abrv_check not in row["LOS"].lower():
                                     start_line = 100 - start_line
-                                home_drive_df.at[index, "LOS"] = start_line
+                                drive_df.at[index, "LOS"] = start_line
 
-                                home_drive_df["team_abrv"] = stat_dict["team_abrv"]
-                                home_drive_df["game_url"] = game_dict["game_url"]
-                                home_drive_df["game_date"] = game_dict["game_date"]
+                                drive_df["team_abrv"] = stat_dict["team_abrv"]
+                                drive_df["game_url"] = game_dict["game_url"]
+                                drive_df["game_date"] = game_dict["game_date"]
 
-                            home_drive_df.columns = drive_columns
-                            drive_ls.append(home_drive_df.to_dict(orient="records"))
+                            drive_df.columns = drive_columns
+                            drive_ls.append(drive_df.to_dict(orient="records"))
 
                         stat_dict["rush_attempts"] = rush_stats.split("-")[0] if rush_stats is not np.nan else None
                         stat_dict["rush_yards"] = rush_stats.split("-")[1] if rush_stats is not np.nan else None
