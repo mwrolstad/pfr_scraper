@@ -1,4 +1,4 @@
-# sports_line_scraper
+# pfr_scraper
 
 An easy tool to scrape the game data from pro-football-reference.com
 
