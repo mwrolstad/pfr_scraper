@@ -154,7 +154,7 @@ def scrape_games(year: int, week: int):
                         player_stats_df = player_stats_df[
                             (player_stats_df["player"] != "Player") & (player_stats_df["player"].notnull())
                         ]
-                        player_stats_df["team_abrv"] = player_stats_df["team_abrv"].apply(lambda x : NFL_ABRV[x])
+                        player_stats_df = player_stats_df.assign(team_abrv=player_stats_df["team_abrv"].apply(lambda x : NFL_ABRV[x]))
                         player_stats_df = player_stats_df.assign(game_url=game_dict["game_url"])
                         player_stats_df = player_stats_df.assign(game_date=game_dict["game_date"])
                         player_stats_df = player_stats_df.fillna(0)
@@ -275,13 +275,10 @@ def scrape_games(year: int, week: int):
                     game_dict["box_score"] = team_ls
                     game_ls.append(game_dict)
 
-    return {"game_stats": game_ls}
+    return game_ls
 
 
 class GameScraper:
-    def __init__(self):
-        print("Initialized")
-
     def scrape_week(self, year, week):
         try:
             return scrape_games(year=year, week=week)
