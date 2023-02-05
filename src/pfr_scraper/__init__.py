@@ -1,6 +1,3 @@
-from datetime import datetime
-from dateutil import tz
-
 from lxml import html
 
 import argparse
@@ -11,7 +8,6 @@ import os
 import re
 import requests
 import pandas as pd
-import pytz
 import urllib.request
 
 
@@ -244,7 +240,7 @@ def scrape_games(year: int, week: int):
                                 drive_df["game_date"] = game_dict["game_date"]
 
                             drive_df.columns = drive_columns
-                            drive_ls.append(drive_df.to_dict(orient="records"))
+                            drive_ls = drive_ls + drive_df.to_dict(orient="records")
 
                         stat_dict["rush_attempts"] = rush_stats.split("-")[0] if rush_stats is not np.nan else None
                         stat_dict["rush_yards"] = rush_stats.split("-")[1] if rush_stats is not np.nan else None
