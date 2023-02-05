@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pfr_scraper"
-version = "0.1.0"
+version = "0.1.1"
 description = "Package used to scrape NFL data on pro-football-reference.com"
 authors = ["Mason Wrolstad <mason.wrolstad@hotmail.com>"]
 

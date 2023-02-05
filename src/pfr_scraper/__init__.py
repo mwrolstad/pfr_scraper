@@ -134,7 +134,7 @@ def scrape_games(year: int, week: int):
                             "passing_sk_yds",
                             "passing_lng",
                             "passing_rate",
-                            "pushing_att",
+                            "rushing_att",
                             "rushing_yds",
                             "rushing_td",
                             "rushing_lng",
@@ -242,6 +242,8 @@ def scrape_games(year: int, week: int):
                             drive_df.columns = drive_columns
                             drive_ls = drive_ls + drive_df.to_dict(orient="records")
 
+                        stat_dict["game_url"] = game_dict["game_url"]
+                        stat_dict["game_date"] = game_dict["game_date"]
                         stat_dict["rush_attempts"] = rush_stats.split("-")[0] if rush_stats is not np.nan else None
                         stat_dict["rush_yards"] = rush_stats.split("-")[1] if rush_stats is not np.nan else None
                         stat_dict["rush_tds"] = rush_stats.split("-")[2] if rush_stats is not np.nan else None
