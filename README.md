@@ -12,13 +12,21 @@ An easy tool to scrape the game data from pro-football-reference.com
 python3 src/pfr_scraper/__init__.py --year 2022 --week 20
 ```
 
-### Import and use as a package:
+### Build package and import:
+
+```cmd
+pip install poetry
+poetry build 
+pip install dist/pfr_scraper-0.1.1.tar.gz
+```
+
+Once the pacakge is install locally, you can now run this script:
 
 ```python
-from src.pfr_scraper import GameScraper
+from pfr_scraper import GameScraper
 import json
 game_scraper = GameScraper()
-stats = game_scraper(nfl_year=2022, nfl_week=20)
+stats = game_scraper.scrape_week(nfl_year=2022, nfl_week=20)
 print(json.dumps(stats[0], indent=2))
 {
   "game_url": "https://www.pro-football-reference.com/boxscores/202301220sfo.htm",
