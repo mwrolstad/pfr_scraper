@@ -26,7 +26,7 @@ Once the pacakge is install locally, you can now run this script:
 from pfr_scraper import GameScraper
 import json
 game_scraper = GameScraper()
-stats = game_scraper.scrape_week(nfl_year=2022, nfl_week=20)
+stats = game_scraper.scrape_week(year=2022, week=20)
 print(json.dumps(stats[0], indent=2))
 {
   "game_url": "https://www.pro-football-reference.com/boxscores/202301220sfo.htm",
