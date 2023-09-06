@@ -59,7 +59,7 @@ def month_string_to_number(string):
         raise ValueError("Not a month")
 
 
-def scrape_games(year: int, week: int):
+def scrape_games(year: int, week: int, proxies=None):
     game_ls = []
 
     URL_TEMPLATE = "https://www.pro-football-reference.com/years/{0}/week_{1}.htm"
@@ -67,7 +67,7 @@ def scrape_games(year: int, week: int):
 
     url = URL_TEMPLATE.format(year, week)
     print("||====== Calling the URL: {url} =======||".format(url=url))
-    response = requests.get(url)
+    response = requests.get(url, proxies=proxies)
 
     tree = html.fromstring(response.content)
     games_count = len(tree.xpath('//*[@class="right gamelink"]'))
@@ -279,9 +279,9 @@ def scrape_games(year: int, week: int):
 
 
 class GameScraper:
-    def scrape_week(self, year, week):
+    def scrape_week(self, year, week, proxies=None):
         try:
-            return scrape_games(year=year, week=week)
+            return scrape_games(year=year, week=week, proxies=proxies)
         except Exception as e:
             print(f"An error occurred:\n{e}")
             return
