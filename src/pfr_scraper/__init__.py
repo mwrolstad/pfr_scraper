@@ -5,6 +5,7 @@ import json
 import logging
 import numpy as np
 import os
+import random
 import re
 import requests
 import pandas as pd
@@ -61,13 +62,18 @@ def month_string_to_number(string):
 
 def scrape_games(year: int, week: int, proxies=None):
     game_ls = []
+    proxy = None
 
     URL_TEMPLATE = "https://www.pro-football-reference.com/years/{0}/week_{1}.htm"
     NFL_ABRV = json.load(open(os.path.join(os.path.dirname(__file__), "nfl_abbreviations.json")))
 
     url = URL_TEMPLATE.format(year, week)
     print("||====== Calling the URL: {url} =======||".format(url=url))
-    response = requests.get(url, proxies=proxies)
+
+    if proxies:
+        proxy = random.choice(proxies)
+
+    response = requests.get(url, proxies=proxy)
 
     tree = html.fromstring(response.content)
     games_count = len(tree.xpath('//*[@class="right gamelink"]'))
@@ -105,7 +111,13 @@ def scrape_games(year: int, week: int, proxies=None):
             teams = [game_dict["away_team"], game_dict["home_team"]]
             abrvs = [game_dict["away_abrv"], game_dict["home_abrv"]]
 
-            game_response = urllib.request.urlopen(game_dict["game_url"]).read()
+            if proxies:
+                proxy_support = urllib.request.ProxyHandler(proxies=random.choice(proxies))
+                opener = urllib.request.build_opener(proxy_support)
+                urllib.request.install_opener(opener)
+
+            req = urllib.request.Request(game_dict["game_url"])
+            game_response = urllib.request.urlopen(req).read()
             game_tree = html.fromstring(game_response)
 
             game_date = game_tree.xpath('//*[@id="content"]/div[2]/div[3]/div[1]')
